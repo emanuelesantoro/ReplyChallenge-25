@@ -78,4 +78,7 @@ class Game:
         if self.get_currently_active_buildings() >= min_buildings:
             self.current_budget += profit * min(max_buildings, self.get_currently_active_buildings())
         
+        for resource in self.current_resources:
+            resource.update()
+        
         self.current_turn_id += 1
