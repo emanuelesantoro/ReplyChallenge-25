@@ -49,7 +49,6 @@ class Game:
         self.available_resources = [Resource(**resource) for resource in resources]
         self.turns = turns
         self.current_turn_id = 0
-        self.current_turn = turns[0]
         self.current_budget = D
         self.current_resources = []
     
@@ -72,9 +71,10 @@ class Game:
             self.current_resources.append(resource)
         
         # add profits
-        max_buildings = self.current_turn["Maximum Buildings"]
-        min_buildings = self.current_turn["Minimum Buildings"]
-        profit = self.current_turn["Profit"]
+        current_turn = self.turns[self.current_turn_id]
+        max_buildings = current_turn["Maximum Buildings"]
+        min_buildings = current_turn["Minimum Buildings"]
+        profit = current_turn["Profit"]
         if self.get_currently_active_buildings() >= min_buildings:
             self.current_budget += profit * min(max_buildings, self.get_currently_active_buildings())
         
