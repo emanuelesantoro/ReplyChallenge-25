@@ -1,9 +1,3 @@
-import argparse
-
-import os
-
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
 def parse_input_file(filename):
     with open(filename, "r") as file:
         lines = file.readlines()
@@ -16,10 +10,15 @@ def parse_input_file(filename):
     for i in range(1, R + 1):
         parts = lines[i].split()
         resource = {
-            "RIr": int(parts[0]), "RAr": int(parts[1]), "RPr": int(parts[2]),
-            "RWr": int(parts[3]), "RMr": int(parts[4]), "RLr": int(parts[5]),
-            "RUr": int(parts[6]), "RTr": parts[7],
-            "REr": int(parts[8]) if len(parts) > 8 else None
+            "Resource ID": int(parts[0]), 
+            "Activation Cost": int(parts[1]),  # One-time initial expenditure
+            "Periodic Cost": int(parts[2]),    # Recurring maintenance cost per turn
+            "Active Turns": int(parts[3]),     # Turns the resource stays active
+            "Downtime Turns": int(parts[4]),   # Turns needed for maintenance after a cycle
+            "Life Cycle": int(parts[5]),       # Total lifespan of the resource
+            "Buildings Powered": int(parts[6]),# Number of buildings it supports per active turn
+            "Special Effect": parts[7],        # Unique effect or property
+            "Efficiency Rating": int(parts[8]) if len(parts) > 8 else None  # Additional performance metric
         }
         resources.append(resource)
     
@@ -27,11 +26,11 @@ def parse_input_file(filename):
     turns = []
     for i in range(R + 1, R + 1 + T):
         TMt, TXt, TRt = map(int, lines[i].split())
-        turns.append({"TMt": TMt, "TXt": TXt, "TRt": TRt})
+        turns.append({"Minimum Buildings": TMt, "Maximum Buildings": TXt, "Profit": TRt})
     
     return D, R, T, resources, turns
 
-level = "../../1-thunberg"
+level = "../1-thunberg"
 
 D, R, T, resources, turns = parse_input_file(f"{level}.txt")
 
@@ -42,7 +41,37 @@ print("Game Turns:", T)
 print("Resources:", resources)
 print("Turns:", turns)
 
-content = "ciao"
+## GAME SEQUENCE
 
-with open(f"{level[0]}.txt", "w") as file:
-    file.write(content)
+available_resources = resources.copy()
+available_budget = D
+active_resources = []
+
+for turn in range(T):
+    resources_to_activate = []
+    
+    ##TODO IMPLEMENT THE SURPLUS OF RESOURCE E
+
+    ## Assert whether at any turn we spent more than we have 
+    for resource in resources_to_activate:
+        available_budget -= resource["Activation Cost"]
+        if available_budget < 0:
+            print("Not enough budget")
+            break
+    for resource in active_resources:
+        available_budget -= resource["Periodic Cost"]
+        if available_budget < 0:
+            print("Not enough budget")
+            break
+
+    ## add the resources to the active resources
+    for resource in resources_to_activate:
+        active_resources.append(resource)
+        # available_resources.remove(resource)
+    
+    ## Check inside the active resources if any of them expired
+    for resource in active_resources:
+        resource["Active Turns"] -= 1
+        if resource["Active Turns"] == 0:
+            available_resources.append(resource)
+            active_resources.remove(resource)
