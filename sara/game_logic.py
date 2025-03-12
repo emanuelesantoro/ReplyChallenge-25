@@ -53,7 +53,7 @@ class Game:
         self.current_resources = []
     
     def get_currently_active_buildings(self):
-        return sum(resource.buildings_powered for resource in self.resources if resource.active)
+        return sum(resource.buildings_powered for resource in self.current_resources if resource.active)
     
     def perform_turn(self, bought_resources_list: list):
         # periodic costs
